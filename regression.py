@@ -17,12 +17,13 @@ df = pd.read_csv("tanker.csv", sep=";")
 
 print("===== 데이터 정보 =====")
 print("데이터 개수:", len(df))
-print("변수:", df.columns.tolist())
+print("변수 이름:")
+print(df.columns.tolist())
 print()
 
 
 # ==========================================
-# 2. 분석에 사용할 변수 선택
+# 2. 분석 변수 설정
 # ==========================================
 
 X = df[["Speed"]]
@@ -50,7 +51,7 @@ plt.show()
 
 
 # ==========================================
-# 4. 학습 데이터 / 테스트 데이터 분리
+# 4. 학습 데이터와 테스트 데이터 분리
 # ==========================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -61,6 +62,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 print("===== 데이터 분할 =====")
+print("전체 데이터:", len(df))
 print("학습 데이터:", len(X_train))
 print("테스트 데이터:", len(X_test))
 print()
@@ -72,12 +74,14 @@ print()
 
 linear_model = LinearRegression()
 
-linear_model.fit(X_train, y_train)
+linear_model.fit(
+    X_train,
+    y_train
+)
 
-linear_pred = linear_model.predict(X_test)
-
-
-# 선형회귀 평가
+linear_pred = linear_model.predict(
+    X_test
+)
 
 linear_r2 = r2_score(
     y_test,
@@ -96,9 +100,7 @@ linear_mae = mean_absolute_error(
     linear_pred
 )
 
-print("===== 선형회귀 결과 =====")
-print("절편:", linear_model.intercept_)
-print("기울기:", linear_model.coef_[0])
+print("===== 선형회귀 평가 결과 =====")
 print("R²:", linear_r2)
 print("RMSE:", linear_rmse)
 print("MAE:", linear_mae)
@@ -127,9 +129,6 @@ poly_pred = poly_model.predict(
     X_test
 )
 
-
-# 비선형회귀 평가
-
 poly_r2 = r2_score(
     y_test,
     poly_pred
@@ -147,7 +146,7 @@ poly_mae = mean_absolute_error(
     poly_pred
 )
 
-print("===== 2차 다항회귀 결과 =====")
+print("===== 2차 다항회귀 평가 결과 =====")
 print("R²:", poly_r2)
 print("RMSE:", poly_rmse)
 print("MAE:", poly_mae)
@@ -155,7 +154,7 @@ print()
 
 
 # ==========================================
-# 7. 두 회귀모델 그래프 비교
+# 7. 선형회귀와 비선형회귀 그래프 비교
 # ==========================================
 
 x_range = np.linspace(
@@ -164,7 +163,6 @@ x_range = np.linspace(
     300
 ).reshape(-1, 1)
 
-
 linear_curve = linear_model.predict(
     x_range
 )
@@ -172,7 +170,6 @@ linear_curve = linear_model.predict(
 poly_curve = poly_model.predict(
     x_range
 )
-
 
 plt.figure(figsize=(10, 6))
 
@@ -208,7 +205,7 @@ plt.show()
 
 
 # ==========================================
-# 8. 모델 성능 비교표
+# 8. 모델 성능 비교
 # ==========================================
 
 result = pd.DataFrame({
@@ -236,7 +233,7 @@ print()
 
 
 # ==========================================
-# 9. 사용자 입력을 통한 연료소비량 예측
+# 9. 선박 속도를 입력하여 연료소비량 예측
 # ==========================================
 
 speed_input = float(
@@ -249,7 +246,6 @@ input_data = pd.DataFrame({
     "Speed": [speed_input]
 })
 
-
 linear_result = linear_model.predict(
     input_data
 )[0]
@@ -258,19 +254,19 @@ poly_result = poly_model.predict(
     input_data
 )[0]
 
-
 print()
-print("===== 연료소비량 예측 =====")
+print("===== 연료소비량 예측 결과 =====")
 print(
-    f"선박 속도: {speed_input:.2f} knots"
+    f"입력한 선박 속도: "
+    f"{speed_input:.2f} knots"
 )
 
 print(
-    f"선형회귀 예측: "
+    f"선형회귀 예측값: "
     f"{linear_result:.2f} g/s"
 )
 
 print(
-    f"비선형회귀 예측: "
+    f"비선형회귀 예측값: "
     f"{poly_result:.2f} g/s"
 )
